@@ -1,0 +1,14 @@
+POST http://localhost:8080/realms/storage-app-realm/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+username=sistema@storage.app.br
+&password=senha
+&grant_type=password
+&client_id=storage-php-client
+&scope=openid
+
+
+### 
+GET http://localhost:3000
+Content-Type: application/json
+

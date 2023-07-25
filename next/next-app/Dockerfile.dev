@@ -1,0 +1,14 @@
+# Estágio 1: Instalar as dependências do Node.js
+FROM node:latest
+
+# Define o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copia apenas os arquivos de dependências do projeto
+COPY package.json package-lock.json ./
+
+# Instala as dependências do projeto
+RUN npm install
+
+# Estágio 2: Servir o aplicativo usando o servidor de desenvolvimento do Next.js
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,143 @@
+version: '3.8'
+services:
+  php-server:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./php/app:/www
+      - ./php/site.conf:/etc/nginx/conf.d/site.conf
+    networks:
+      - keycloack_network
+
+  php-app:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php-fpm
+    env_file:
+      - ./php/.env
+    volumes:
+      - ./php/app:/www
+    networks:
+      - keycloack_network
+
+  php-db:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+    - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: teste
+    volumes: 
+      - ./db/mysql/php-db:/var/lib/mysql
+    networks:
+      - keycloack_network
+    
+  whatsapp-api:
+    build:
+      context: ./nest/whatsapp-api
+      dockerfile: Dockerfile.dev
+    container_name: whatsapp-api
+    restart: always
+    tty: true
+    depends_on:
+      - whatsapp-db
+    ports:
+    - "3000:3000"
+    env_file:
+      - ./nest/whatsapp-api/.env
+    volumes:
+      - ./nest/whatsapp-api:/home/node/app
+    networks:
+      - keycloack_network
+
+  whatsapp-db:
+    image: postgres
+    container_name: whatsapp-db
+    restart: always
+    ports:
+      - 3001:5432
+    environment:
+      POSTGRES_USER: "pguser"
+      POSTGRES_PASSWORD: "pgpass"
+      POSTGRES_DB: "whatsapp"
+    volumes:
+      - ./db/postgres/whatsapp-db:/var/lib/postgresql/data
+    networks:
+      - keycloack_network
+
+  angular-app:
+    build:
+      context: ./angular/angular-app
+      dockerfile: Dockerfile.dev
+    container_name: angular-app
+    # restart: always
+    tty: true
+    ports:
+    - "4200:4200"
+    volumes:
+      - ./angular/angular-app/:/app
+    networks:
+      - keycloack_network
+
+  next-app:
+    build:
+        context: ./next/next-app
+        dockerfile: Dockerfile.dev
+    container_name: next-app
+    # restart: always
+    tty: true
+    ports:
+    - "5000:3000"
+    volumes:
+      - ./next/next-app/:/app
+    networks:
+      - keycloack_network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    command: ["start-dev"]
+    environment:
+      # keycloak varables
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # database varables
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_USERNAME: pguser
+      KC_DB_PASSWORD: pgpass
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_SCHEMA: public
+      KC_HEALTH_ENABLED: true
+    ports:
+      - 8080:8080
+    depends_on:
+      - keycloak-db
+    networks:
+      - keycloack_network
+
+  keycloak-db:
+    image: postgres:11
+    container_name: keycloak-db
+    volumes:
+      - .db/postgres/keycloak:/var/lib/postgresql/data
+    ports:
+      - 8081:5432
+    healthcheck:
+      test: exit 0
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpass
+      POSTGRES_DB: keycloak
+    networks:
+      - keycloack_network
+
+networks:
+  keycloack_network:
+    driver: bridge
