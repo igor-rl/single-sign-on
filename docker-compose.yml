@@ -35,7 +35,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: teste
     volumes: 
-      - ./db/mysql/php-db:/var/lib/mysql
+      - ./.db/mysql/php-db:/var/lib/mysql
     networks:
       - keycloack_network
     
@@ -68,37 +68,37 @@ services:
       POSTGRES_PASSWORD: "pgpass"
       POSTGRES_DB: "whatsapp"
     volumes:
-      - ./db/postgres/whatsapp-db:/var/lib/postgresql/data
+      - ./.db/postgres/whatsapp-db:/var/lib/postgresql/data
     networks:
       - keycloack_network
 
-  angular-app:
-    build:
-      context: ./angular/angular-app
-      dockerfile: Dockerfile.dev
-    container_name: angular-app
-    # restart: always
-    tty: true
-    ports:
-    - "4200:4200"
-    volumes:
-      - ./angular/angular-app/:/app
-    networks:
-      - keycloack_network
+  # angular-app:
+  #   build:
+  #     context: ./angular/angular-app
+  #     dockerfile: Dockerfile.dev
+  #   container_name: angular-app
+  #   # restart: always
+  #   tty: true
+  #   ports:
+  #   - "4200:4200"
+  #   volumes:
+  #     - ./angular/angular-app/:/app
+  #   networks:
+  #     - keycloack_network
 
-  next-app:
-    build:
-        context: ./next/next-app
-        dockerfile: Dockerfile.dev
-    container_name: next-app
-    # restart: always
-    tty: true
-    ports:
-    - "5000:3000"
-    volumes:
-      - ./next/next-app/:/app
-    networks:
-      - keycloack_network
+  # next-app:
+  #   build:
+  #       context: ./next/next-app
+  #       dockerfile: Dockerfile.dev
+  #   container_name: next-app
+  #   # restart: always
+  #   tty: true
+  #   ports:
+  #   - "5000:3000"
+  #   volumes:
+  #     - ./next/next-app/:/app
+  #   networks:
+  #     - keycloack_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:21.1.1
@@ -126,7 +126,7 @@ services:
     image: postgres:11
     container_name: keycloak-db
     volumes:
-      - .db/postgres/keycloak:/var/lib/postgresql/data
+      - ./.db/postgres/keycloak:/var/lib/postgresql/data
     ports:
       - 8081:5432
     healthcheck:

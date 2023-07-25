@@ -51,13 +51,10 @@ async function bootstrap() {
     }));
 
     const config = new DocumentBuilder()
-      .setTitle('API BROWS - APERFEIÇOAMENTO')
+      .setTitle('API Nestjs - Whatsapp Web js Boot')
       .setVersion('1.0')
-      .addTag('Brows', 'Hello Brows Aperfeiçoamento!')
+      .addTag('Zap Boot', 'Hello Whatsapp Web js Boot.')
       .addTag('Auth', 'Recursos relacionados à autenticação.')
-      .addTag('Usuarios', 'Recursos relacionados às contas dos usuários.')
-      .addTag('Produtos', 'Recursos relacionados ao produtos ofertados.')
-      .addTag('NodeMailer', 'Recursos relacionados ao envio de emails utilizando o NodeMailer.')
       .addBearerAuth(
         {
           type: 'http',

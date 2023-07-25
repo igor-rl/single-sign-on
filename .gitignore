@@ -4,7 +4,6 @@
 **/.angular/
 **/.node_cache/
 **/.next/
-**/.env
 **/.vscode/
 db
 .db
